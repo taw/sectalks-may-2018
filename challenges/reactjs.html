@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ReactJS Password Validator</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-size: 32px;
+    }
+    input {
+      font-size: 32px;
+      width: 600px;
+    }
+  </style>
+</head>
+<body>
+<div id="app"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.6.1/react.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.6.1/react-dom.js"></script>
+<script>
+let expected = [
+  112, 226, 69, 90, 251,
+  14, 93, 101, 24, 28,
+  206, 197, 165, 106, 197,
+  145, 133, 169, 58, 253,
+  121, 218, 127, 202, 83,
+  19, 158, 23, 45, 73,
+  222, 183, 140, 19, 217,
+  23, 60, 149, 181, 203, 
+];
+class ValidatorLayer extends React.Component {
+  shuffle(array) {
+    return Array.from({ length: 40 }).map((el, i) => array[(21 * i + 17) % 40]);
+  }
+  shift(array) {
+    return array.map((el, i) => (el * 7 + i * 19) & 255);
+  }
+  render() {
+    let { layer, flag } = this.props;
+    if (flag[7] === expected[layer]) {
+      if (layer === 39) {
+        return React.createElement(
+          "div",
+          null,
+          "The flag is correct"
+        );
+      } else {
+        return React.createElement(ValidatorLayer, { flag: this.shift(this.shuffle(flag)), layer: layer + 1 });
+      }
+    } else {
+      return React.createElement(
+        "div",
+        null,
+        "The flag is wrong"
+      );
+    }
+  }
+}
+class Validator extends React.Component {
+  render() {
+    let { flag } = this.props;
+    if (flag.length === 40) {
+      let flag_parts = Array.from({ length: 40 }).map((el, i) => this.props.flag.charCodeAt(i));
+      return React.createElement(ValidatorLayer, { flag: flag_parts, layer: 0 });
+    } else {
+      return React.createElement(
+        "div",
+        null,
+        "The flag is wrong"
+      );
+    }
+  }
+}
+
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { flag: "" };
+  }
+
+  render() {
+    return React.createElement(
+      "div",
+      null,
+      React.createElement(
+        "span",
+        null,
+        "Enter flag:"
+      ),
+      React.createElement("input", { type: "text", value: this.state.flag, onChange: ev => this.setState({ flag: ev.target.value }) }),
+      React.createElement(Validator, { flag: this.state.flag })
+    );
+  }
+}
+
+ReactDOM.render(React.createElement(App, null), document.getElementById("app"));</script>
+</body>
+</html>
