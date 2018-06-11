@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+
+if ARGV.size == 1
+  key = ARGV[0]
+  system *%W[
+    convert
+      +antialias
+      -size 250x24
+      -background blue
+      -font ComicSans
+      -pointsize 16
+      -fill red
+      -gravity Center
+      #{"caption:#{key}"}
+      -flatten secret_message.png
+  ]
+  # Otherwise it will create 16bit deep pnm
+  system "convert secret_message.png secret_message.pnm"
+else
+  STDERR.puts "Usage: #{$0} key"
+  exit 1
+end

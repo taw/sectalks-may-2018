@@ -1,0 +1,24 @@
+#!/usr/bin/env ruby
+
+
+fh = open("secret_message.pnm", "rb")
+raise unless fh.readline == "P6\n"
+xsz, ysz = fh.readline.chomp.split.map(&:to_i)
+raise unless fh.readline == "255\n"
+data = fh.read
+raise "Data size #{data.size} but expected #{xsz}x#{ysz}x3" unless data.size == 3*xsz*ysz
+
+rows = []
+(0...ysz).each do |y|
+  row = data[3*xsz*y, 3*xsz]
+  outrow = ""
+  (0...xsz).each do |x|
+    px = row[3*x, 3]
+    if px == "\x00\x00\xFF".b
+      outrow << " "
+    else
+      outrow << "\u00a0"
+    end
+  end
+  puts outrow
+end
