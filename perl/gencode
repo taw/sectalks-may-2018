@@ -1,0 +1,29 @@
+#!/usr/bin/env ruby
+
+unless ARGV.size == 1
+  STDERR.puts "Usage: #{$0} 'flag{...}'"
+  exit 1
+end
+
+key = ARGV[0]
+
+code = <<EOF
+#!/usr/bin/perl -l
+$_=shift;
+die "WRONG" unless /^.{#{key.size}}$/;
+EOF
+
+while key != ""
+  i = rand(key.size)
+  left, c, right = key[0, i], key[i], key[i+1..-1]
+  key = right+left
+
+  code << %Q[s/^(.{#{left.size}})#{Regexp.escape(c)}(.*)$/\\2\\1/;\n]
+end
+
+code << <<EOF
+die "WRONG" if $_;
+print "CORRECT PASSWORD";
+EOF
+
+puts code
