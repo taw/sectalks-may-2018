@@ -1,0 +1,21 @@
+#!/usr/bin/env ruby
+
+require "ctf-tools"
+
+p, q, e = open("primes.txt").readlines.map{|x| x[/\d+/].to_i}
+
+n = p * q
+d = RSA.derive_d(e: e, p: p, q: q)
+
+open("public.txt", "w") do |fh|
+  fh.puts "n: #{n}"
+  fh.puts "e: #{e}"
+end  
+
+open("private.txt", "w") do |fh|
+  fh.puts "n: #{n}"
+  fh.puts "p: #{p}"
+  fh.puts "q: #{q}"
+  fh.puts "e: #{e}"
+  fh.puts "d: #{d}"
+end  

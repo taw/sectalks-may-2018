@@ -1,0 +1,19 @@
+#!/usr/bin/env ruby
+
+require "openssl"
+
+size = 200 # 1024
+i = 1
+loop do
+  p = OpenSSL::BN.generate_prime(size)
+  q = p + 2
+  puts "Test #{i}: ..#{p.to_s[-10..-1]} ..#{q.to_s[-10..-1]}"
+  if p.prime? and q.prime?
+    puts p
+    puts q
+    e = 0x10001
+    puts e
+    break
+  end
+  i += 1
+end

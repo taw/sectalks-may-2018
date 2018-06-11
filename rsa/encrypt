@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+
+require "ctf-tools"
+
+message = open("message.txt").read.chomp.to_i_binary
+n, e = open("public.txt").readlines.map{|x| x[/\d+/].to_i}
+
+ct = RSA.encrypt(message, n: n, e: e)
+puts ct
