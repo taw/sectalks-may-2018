@@ -1,0 +1,39 @@
+#!/usr/bin/env ruby
+
+data = open("flag.zip", "rb").read.bytes
+
+xsz = 8 * 5
+ysz = 6 * data.size
+outdata = "P6\n#{xsz} #{ysz}\n255\n".b
+
+fg = [51, 215, 206].pack("C*")
+bg = [51, 214, 206].pack("C*")
+
+data.each do |c|
+  x = "%08b" % c.ord
+  row = (0..5).map{ "" }
+  x.chars.each do |xi|
+    if xi == "1"
+      row[0] << "     "
+      row[1] << "  x  "
+      row[2] << "  x  "
+      row[3] << "  x  "
+      row[4] << "  x  "
+      row[5] << "     "
+    else
+      row[0] << "     "
+      row[1] << " xxx "
+      row[2] << " x x "
+      row[3] << " x x "
+      row[4] << " xxx "
+      row[5] << "     "
+    end
+  end
+  row.join.chars.each do |c|
+    outdata << (c == "x" ? fg : bg)
+  end
+end
+
+open("image.pnm", "wb") do |fh|
+  fh.write outdata
+end
